@@ -16,7 +16,7 @@ docker exec ollama ollama pull llama3:3.2
 ```
 
 ## Running the console app
-1. Navigate to the `OllamaChat` directory.
+1. Open `OllamaChat.sln` in Visual Studio (or another IDE) or navigate to the `OllamaChat` directory.
 2. Build and run the application:
    ```bash
    dotnet run --project OllamaChat.csproj
