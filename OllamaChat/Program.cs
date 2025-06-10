@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using OllamaChat.Models;
 using OllamaChat;
 
+await DockerHelper.RunSetupScriptAsync();
 await DockerHelper.EnsureOllamaRunningAsync();
 
 var http = new HttpClient { BaseAddress = new Uri("http://localhost:11434") };

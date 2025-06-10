@@ -4,6 +4,47 @@ namespace OllamaChat;
 
 public static class DockerHelper
 {
+    public static async Task RunSetupScriptAsync()
+    {
+        var scriptPath = Path.Combine("..", "simple_script.sh");
+        if (!File.Exists(scriptPath))
+            return;
+
+        var psi = new ProcessStartInfo
+        {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+
+        if (OperatingSystem.IsWindows())
+        {
+            psi.FileName = "wsl";
+            psi.ArgumentList.Add("-e");
+            psi.ArgumentList.Add(scriptPath);
+        }
+        else
+        {
+            psi.FileName = "bash";
+            psi.ArgumentList.Add(scriptPath);
+        }
+
+        try
+        {
+            using var process = Process.Start(psi)!;
+            var output = await process.StandardOutput.ReadToEndAsync();
+            var error = await process.StandardError.ReadToEndAsync();
+            await process.WaitForExitAsync();
+            if (!string.IsNullOrWhiteSpace(output))
+                Console.WriteLine(output.Trim());
+            if (process.ExitCode != 0 && !string.IsNullOrWhiteSpace(error))
+                Console.WriteLine(error.Trim());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to run setup script: {ex.Message}");
+        }
+    }
     private static async Task<string> RunAsync(string fileName, string args)
     {
         var psi = new ProcessStartInfo(fileName, args)
