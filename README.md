@@ -16,6 +16,10 @@ can run:
 docker run -d --name ollama -p 11434:11434 -v ollama:/root/.ollama ollama/ollama
 docker exec ollama ollama pull llama3:3.2
 ```
+Or run the helper script (Windows users should keep the leading `./`):
+```bash
+wsl -e ./simple_script.sh
+```
 
 ## Running the console app
 1. Open `OllamaChat.sln` in Visual Studio (or another IDE) or navigate to the `OllamaChat` directory.
