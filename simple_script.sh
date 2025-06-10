@@ -1,6 +1,19 @@
 #!/bin/bash
 set -e
 
+# Install Docker if it is not present (useful inside WSL)
+if ! command -v docker >/dev/null 2>&1; then
+    echo "Docker not found. Installing..."
+    sudo apt-get update
+    sudo apt-get install -y docker.io
+fi
+
+# Ensure the Docker daemon is running
+if ! pgrep -x dockerd >/dev/null; then
+    echo "Starting Docker daemon..."
+    sudo service docker start
+fi
+
 # Ensure the Ollama container exists
 if ! docker ps -a --format '{{.Names}}' | grep -q '^ollama$'; then
     echo "Creating new Ollama container..."
