@@ -25,31 +25,40 @@ public static class DockerHelper
         }
     }
 
+    private static string DockerCommand => OperatingSystem.IsWindows() ? "wsl" : "docker";
+
+    private static string FormatArgs(string args)
+    {
+        return OperatingSystem.IsWindows() ? $"docker {args}" : args;
+    }
+
+    private static Task<string> RunDockerAsync(string args) => RunAsync(DockerCommand, FormatArgs(args));
+
     public static async Task EnsureOllamaRunningAsync()
     {
         // check if docker exists
-        var dockerVersion = await RunAsync("docker", "--version");
+        var dockerVersion = await RunDockerAsync("--version");
         if (string.IsNullOrWhiteSpace(dockerVersion))
         {
             Console.WriteLine("Docker not found. Please install Docker and ensure it is in PATH.");
             return;
         }
 
-        var running = await RunAsync("docker", "ps --filter name=ollama --filter status=running -q");
+        var running = await RunDockerAsync("ps --filter name=ollama --filter status=running -q");
         if (string.IsNullOrWhiteSpace(running))
         {
-            var exists = await RunAsync("docker", "ps -a --filter name=ollama -q");
+            var exists = await RunDockerAsync("ps -a --filter name=ollama -q");
             if (string.IsNullOrWhiteSpace(exists))
             {
                 Console.WriteLine("Starting new Ollama container...");
-                await RunAsync("docker", "run -d --name ollama -p 11434:11434 -v ollama:/root/.ollama ollama/ollama");
+                await RunDockerAsync("run -d --name ollama -p 11434:11434 -v ollama:/root/.ollama ollama/ollama");
             }
             else
             {
                 Console.WriteLine("Starting existing Ollama container...");
-                await RunAsync("docker", "start ollama");
+                await RunDockerAsync("start ollama");
             }
         }
-        await RunAsync("docker", "exec ollama ollama pull llama3:3.2");
+        await RunDockerAsync("exec ollama ollama pull llama3:3.2");
     }
 }

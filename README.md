@@ -9,7 +9,9 @@ This repository contains a simple C# console application that communicates with 
 ## Running Ollama with Docker
 The application will start the Docker container for you if it is not already
 running. Ensure Docker is installed and the current user has permission to run
-Docker commands. If you prefer to start the container manually, you can run:
+Docker commands. On Windows, if Docker is inside WSL, the application will
+invoke `wsl` automatically. If you prefer to start the container manually, you
+can run:
 ```bash
 docker run -d --name ollama -p 11434:11434 -v ollama:/root/.ollama ollama/ollama
 docker exec ollama ollama pull llama3:3.2
